@@ -57,6 +57,64 @@ fprintf('Media teórica: %f\n', media_teorica);
 fprintf('Varianza muestral: %f\n', var_muestral);
 fprintf('Varianza teórica: %f\n', var_teorica);
 
+%ACTIVIDAD 3
+%Genere N = 200 muestras para definir los siguientes vectores aleatorios.:
+%1. Para el vector U = [U1 U2]T , genere dos variables uniformes, U1~ U(0;2)
+%y U2~ U(0;3).
+%2. Para el vector X = [X1 X2]T genere muestras de las variables X1y X2 a partir de U1
+% y U2, tal que X1= 0.5 U1 – 0.3 U2 y X2 = 0.7 U1 + 0.2 U2.
+%3. Para el vector Y = [Y1 Y2]T, genere muestras de las variables Y1
+% y Y2 a partir de U1 y U2, tal que Y1 = 1.2 U1 – 0.1 U2
+%y Y2 = U1 + 0.1 U2
+
+%Haga el gráfico de dispersión (ej: scatter(u1, u2)) y calcule el coeficiente de correlación
+%para cada uno de casos.
+%Nota: defina el límite de los ejes del gráfico con axis([-1 3 -1 3] ).
+
+N = 200;
+U2 = unifrnd(0, 2, 1, N); 
+U3 = unifrnd(0, 3, 1, N);
+
+U = [U2, U3];
+
+figure;
+scatter(U2, U3, 'filled');  % 'filled' para rellenar los puntos
+axis([-1 3 -1 3]);  % Definir límites de los ejes
+title('Gráfico de Dispersión de U2 vs U3');
+xlabel('U2');
+ylabel('U3');
+
+correlacion = corrcoef(U2, U3);
+
+fprintf('Coeficiente de correlación entre U2 y U3: %f\n', correlacion(1,2));
+
+Y1 = 0.5*U2 - 0.3*U3;
+Y2 = 0.7*U2 + 0.2*U3;
+Y = [Y1, Y2]
+
+figure;
+scatter(Y1, Y2, 'filled');  % 'filled' para rellenar los puntos
+axis([-1 3 -1 3]);  % Definir límites de los ejes
+title('Gráfico de Dispersión de Y1 vs Y2');
+xlabel('Y1');
+ylabel('Y2');
+
+correlacion1 = corrcoef(Y1, Y2);
+
+fprintf('Coeficiente de correlación entre Y1 y Y2: %f\n', correlacion1(1,2));
 
 
+Z1 = 1.2*U2 - 0.1*U3;
+Z2 = U2 + 0.1*U3;
+
+Z = [Z1, Z2];
+figure;
+scatter(Z1, Z2, 'filled');  % 'filled' para rellenar los puntos
+axis([-1 3 -1 3]);  % Definir límites de los ejes
+title('Gráfico de Dispersión de Z1 vs Z2');
+xlabel('Z1');
+ylabel('Z2');
+correlacion2 = corrcoef(Z1, Z2);
+
+fprintf('Coeficiente de correlación entre Z1 y Z2: %f\n', correlacion2(1,2));
 
