@@ -1,0 +1,110 @@
+% Parámetros
+n = 2000; % número de realizaciones
+muZ = [0; 0]; % media de Z
+CZ = eye(2); % matriz de covarianza de Z
+
+% Generación de un vector normal estándar de dos componentes Z
+Z = mvnrnd(muZ', CZ, n); % generar 2000 observaciones
+
+% Graficar el vector Z (Z2 vs Z1)
+figure;
+scatter(Z(:,1), Z(:,2), 10, 'filled');
+title('Gráfico de dispersión de Z (Z2 vs Z1)');
+xlabel('Z1');
+ylabel('Z2');
+axis equal;
+grid on;
+
+% Crear una malla para las curvas de nivel de Z
+x = linspace(min(Z(:,1)), max(Z(:,1)), 100);
+y = linspace(min(Z(:,2)), max(Z(:,2)), 100);
+[X1, Y1] = meshgrid(x, y);
+Z_density = mvnpdf([X1(:), Y1(:)], muZ', CZ); % densidad de Z
+Z_density = reshape(Z_density, length(x), length(y));
+
+hold on;
+contour(X1, Y1, Z_density, 'LineColor', 'r'); % curvas de nivel
+hold off;
+
+% Histogramas de cada componente
+figure;
+subplot(2, 1, 1);
+histogram(Z(:,1), 'Normalization', 'pdf');
+title('Histograma de Z1');
+xlabel('Z1');
+ylabel('Densidad');
+
+subplot(2, 1, 2);
+histogram(Z(:,2), 'Normalization', 'pdf');
+title('Histograma de Z2');
+xlabel('Z2');
+ylabel('Densidad');
+
+% Estadísticas
+corr_Z = corrcoef(Z); % matriz de correlación
+mean_Z = mean(Z); % media de Z
+
+disp('Correlación entre componentes Z:');
+disp(corr_Z);
+disp('Media de Z:');
+disp(mean_Z);
+
+% Parámetros de la transformación
+Cy = [0.7  0.8; 0.8  1.75]; % covarianza deseada
+muY = [0.8; 1.0]; % media deseada
+
+% Diagonalización de Cy
+[P, D] = eig(Cy); % P: matriz de autovectores, D: matriz de autovalores
+
+% Confirmar que P * D * P' da Cy
+assert(isequal(round(P * D * P', 10), round(Cy, 10)), 'Error en la diagonalización.');
+
+% Transformación lineal
+b = muY; % vector de traslación
+A = P * sqrt(D); % matriz de transformación
+
+% Aplicar la transformación
+Y = (A * Z')' + b'; % Transponer para que las dimensiones coincidan
+
+% Graficar el vector Y (Y2 vs Y1)
+figure;
+scatter(Y(:,1), Y(:,2), 10, 'filled');
+title('Gráfico de dispersión de Y (Y2 vs Y1)');
+xlabel('Y1');
+ylabel('Y2');
+axis equal;
+grid on;
+
+% Crear una malla para las curvas de nivel de Y
+x1 = linspace(min(Y(:,1)), max(Y(:,1)), 100);
+y1 = linspace(min(Y(:,2)), max(Y(:,2)), 100);
+[X2, Y2] = meshgrid(x1, y1);
+Y_density = mvnpdf([X2(:), Y2(:)], muY', Cy); % densidad de Y
+Y_density = reshape(Y_density, length(x1), length(y1));
+
+hold on;
+contour(X2, Y2, Y_density, 'LineColor', 'r'); % curvas de nivel de Y
+hold off;
+
+% Histogramas de cada componente de Y
+figure;
+subplot(2, 1, 1);
+histogram(Y(:,1), 'Normalization', 'pdf');
+title('Histograma de Y1');
+xlabel('Y1');
+ylabel('Densidad');
+
+subplot(2, 1, 2);
+histogram(Y(:,2), 'Normalization', 'pdf');
+title('Histograma de Y2');
+xlabel('Y2');
+ylabel('Densidad');
+
+% Estadísticas de Y
+corr_Y = corrcoef(Y); % matriz de correlación
+mean_Y = mean(Y); % media de Y
+
+disp('Correlación entre componentes Y:');
+disp(corr_Y);
+disp('Media de Y:');
+disp(mean_Y);

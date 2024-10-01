@@ -1,0 +1,59 @@
+% Cargar la imagen
+img1 = imread('img_01 (3).jpg'); 
+img_gris = rgb2gray(img1);   % Convertir a escala de grises
+[fil, col] = size(img_gris); % Obtener dimensiones de la imagen
+
+% Convertir la imagen a tipo double
+data = double(img_gris); 
+
+% Aplanar la matriz a un vector 1D
+tira = data(:);
+
+% Calcular la media de los datos
+media = mean(tira);
+
+% Restar la media a los datos
+X_centrado = tira - media;
+
+% Calcular la matriz de covarianza
+Covar = cov(X_centrado);
+
+% Obtener autovalores y autovectores de la matriz de covarianza
+[P, D] = eig(Covar);
+
+% Ordenar los autovalores y autovectores en orden decreciente
+[autovalores_ordenados, idx] = sort(diag(D), 'descend');
+autovectores_ordenados = P(:, idx);
+
+% Definir la cantidad de componentes principales a conservar
+r = 100;  % Puedes ajustar el valor de r según el nivel de compresión deseado
+
+% Verificar el número de autovectores disponibles
+[~, nColumnas] = size(autovectores_ordenados);
+if r > nColumnas
+    warning('r es mayor que el número de autovectores disponibles. Ajustando r a %d.', nColumnas);
+    r = nColumnas; % Ajustar r al número máximo posible
+end
+
+% Seleccionar los autovectores correspondientes a los r autovalores más grandes
+V = autovectores_ordenados(:, 1:r);
+
+% Proyectar los datos en las componentes principales
+YR = V' * X_centrado;
+
+% Guardar las componentes principales para reconstrucción
+% Reconstrucción de la imagen usando las componentes principales
+X_reconstruido = V * YR + media;
+
+% Rearmar la imagen a su tamaño original
+img_out = reshape(X_reconstruido, [fil, col]);
+
+% Mostrar la imagen original y la reconstruida
+figure;
+subplot(1,2,1);
+imshow(uint8(img_gris));  % Imagen original
+title('Imagen Original');
+
+subplot(1,2,2);
+imshow(uint8(img_out));  % Imagen reconstruida
+title('Imagen Reconstruida con PCA');

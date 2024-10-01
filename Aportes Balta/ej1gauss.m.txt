@@ -1,0 +1,31 @@
+%Se quiere utilizar una transformación lineal Y = A Z + b que permita convertir un vector 
+%aleatorio normal estándar con parámetros CZ y 𝜇Z en otro vector con parámetros CY
+% = [0.7  0.8 ; 0.8  1.75] y 𝜇Y = [0.8  1.0]T. 
+%1. Genere un vector normal estándar de dos componentes Z = [Z1 Z2]T  de 2000 
+%realizaciones con media nula 𝜇Z = 0 y covarianza CZ = I (identidad). Haga un gráfico 
+%de dispersión del vector Z (Z2 vs Z1) superpuesta a las curvas de nivel de la 
+%densidad conjunta fZ (z). Grafique también los histogramas de cada
+%componente.
+
+
+X = randn([2000,2])%Genero una matriz de 2 componentes 2000 obs c/u
+
+figure();
+
+scatter(X(:,1),X(:,2))
+
+figure();
+
+histogram(X(:,1),'Normalization','count')%Histograma componente 1
+
+figure();
+
+histogram(X(:,2),'Normalization','count')%Histograma compoenente 2
+
+corrcoef(X) % es practicamente la identidad
+
+mean(X) % 0.01 y -0.03 es casi el vector nulo.
+
+contour(X(:,1),X(:,2),X(:,1)*X(:,2))
+
+

@@ -1,0 +1,5 @@
+img1 = imread('img_01 (3).jpg');
+img = rgb2gray(img1);  
+data = double(img_gr);
+mean = mean(img)
+Covar = cov(img)

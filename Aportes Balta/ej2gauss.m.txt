@@ -1,0 +1,94 @@
+% Se quiere utilizar una transformación lineal Y = A Z + b que permita convertir un vector 
+%aleatorio normal estándar con parámetros CZ y 𝜇Z
+% en otro vector con parámetros CY = [0.7  0.8 ; 0.8  1.75] y 𝜇Y = [0.8  1.0]T. 
+
+
+% Generación de un vector normal estándar de dos componentes Z
+n = 2000; % número de realizaciones
+Z = randn(n, 2); % matriz de 2000 observaciones y 2 componentes
+
+% Graficar el vector Z (Z2 vs Z1)
+figure;
+scatter(Z(:,1), Z(:,2), 10, 'filled');
+title('Gráfico de dispersión de Z (Z2 vs Z1)');
+xlabel('Z1');
+ylabel('Z2');
+axis equal;
+grid on;
+
+% Crear una malla para las curvas de nivel
+x = linspace(min(Z(:,1)), max(Z(:,1)), 100);
+y = linspace(min(Z(:,2)), max(Z(:,2)), 100);
+[X1, Y1] = meshgrid(x, y);
+Z_density = mvnpdf([X1(:), Y1(:)], [0 0], eye(2)); % densidad de Z
+Z_density = reshape(Z_density, length(x), length(y));
+
+hold on;
+contour(X1, Y1, Z_density, 'LineColor', 'r'); % curvas de nivel
+hold off;
+
+% Histogramas de cada componente
+figure;
+subplot(2, 1, 1);
+histogram(Z(:,1), 'Normalization', 'pdf');
+title('Histograma de Z1');
+xlabel('Z1');
+ylabel('Densidad');
+
+subplot(2, 1, 2);
+histogram(Z(:,2), 'Normalization', 'pdf');
+title('Histograma de Z2');
+xlabel('Z2');
+ylabel('Densidad');
+
+% Estadísticas
+corr_Z = corrcoef(Z); % matriz de correlación
+mean_Z = mean(Z); % media de Z
+
+disp('Correlación entre componentes Z:');
+disp(corr_Z);
+
+disp('Media de Z:');
+disp(mean_Z);
+
+%Ahora a partir de mi matriz Cx, tengo que poder diagonalizarla en P Cx Pt
+%Pero Cx es ahora la identidad
+
+Cy = [0.7  0.8 ; 0.8  1.75]
+
+[P,D] = eig(Cy) %en P tengo la matriz de proyeccion y en D tengo los autovalores
+
+P * D * transpose(P) %confirmo que da Cy
+
+b = [0.8 ; 1.0]
+
+A = P * sqrt(Cy)
+
+Z1 = randn(n, 2); % matriz de 2000 observaciones y 2 componentes
+
+Y = A * Z1 + b
+
+
+figure;
+scatter(Y(:,1), Y(:,2), 10, 'filled');
+title('Gráfico de dispersión de Z (Z2 vs Z1)');
+xlabel('Z1');
+ylabel('Z2');
+axis equal;
+grid on;
+
+% Crear una malla para las curvas de nivel
+x1 = linspace(min(Y(:,1)), max(Y(:,1)), 100);
+y1 = linspace(min(Y(:,2)), max(Y(:,2)), 100);
+[X2, Y2] = meshgrid(x1, y1);
+Z_density1 = mvnpdf([X2(:), Y2(:)], [0 0], eye(2)); % densidad de Z
+Z_density1 = reshape(Z_density1, length(x1), length(y1));
+
+
+hold on;
+contour(X1, Y1, Z_density1, 'LineColor', 'r'); % curvas de nivel
+hold off;
+
+
+
+

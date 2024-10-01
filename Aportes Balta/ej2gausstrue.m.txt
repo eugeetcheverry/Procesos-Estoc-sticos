@@ -1,0 +1,61 @@
+% Definición de parámetros
+Cx = [0.7  0.9; 0.9  1.75]; 
+u = [0.8; 1.0];
+
+% Generación de Z22
+Z22 = randn(2000, 2); % matriz de 2000 observaciones y 2 componentes
+
+% Diagonalización de Cx
+[P, D] = eig(Cx);
+
+% Calcular la matriz A
+A = P * sqrt(D); % A es de tamaño 2x2
+
+% Aplicar la transformación para generar X
+X = (A * Z22')' + u'; % Transponer para que las dimensiones coincidan
+
+% Descorrelación y centrado
+A1 = sqrt(D)^(-1) * P'; % Matriz para descorrelacionar
+b1 = -A1 * u;           % Centrado de los datos
+
+% Generar el nuevo vector Y
+Y = (A1 * X')' + b1';   % Transformación y centrado
+
+% Graficar los histogramas de las componentes de X
+figure;
+subplot(2,2,1);
+histogram(X(:,1), 30);
+title('Histograma de X1');
+
+subplot(2,2,2);
+histogram(X(:,2), 30);
+title('Histograma de X2');
+
+% Graficar los histogramas de las componentes de Y
+subplot(2,2,3);
+histogram(Y(:,1), 30);
+title('Histograma de Y1');
+
+subplot(2,2,4);
+histogram(Y(:,2), 30);
+title('Histograma de Y2');
+
+% Graficar las curvas de nivel y dispersión de X y Y
+figure;
+subplot(1,2,1);
+scatter(X(:,1), X(:,2), '.');
+title('Dispersión de X');
+xlabel('X1'); ylabel('X2');
+axis([-4 4 -4 4]);
+hold on;
+fcontour(@(x1, x2) mvnpdf([x1 x2], u', Cx), [-4 4 -4 4], 'LineWidth', 2);
+hold off;
+
+subplot(1,2,2);
+scatter(Y(:,1), Y(:,2), '.');
+title('Dispersión de Y');
+xlabel('Y1'); ylabel('Y2');
+axis([-4 4 -4 4]);
+hold on;
+fcontour(@(y1, y2) mvnpdf([y1 y2], [0 0], eye(2)), [-4 4 -4 4], 'LineWidth', 2);
+hold off;
